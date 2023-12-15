@@ -1,8 +1,6 @@
-/**
- * @see https://www.electron.build/configuration/configuration
- */
-{
-  $schema: "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+const config = {
+  $schema:
+    "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
   appId: "YourAppID",
   asar: true,
   productName: "YourAppName",
@@ -21,7 +19,7 @@
         arch: ["x64"],
       },
     ],
-    artifactName: "${productName}-Windows-${version}-Setup.${ext}",
+    artifactName: "${productName}123-Windows-${version}-Setup.${ext}",
   },
   nsis: {
     oneClick: false,
@@ -33,4 +31,6 @@
     target: ["AppImage"],
     artifactName: "${productName}-Linux-${version}.${ext}",
   },
-}
+};
+
+module.exports = config;
