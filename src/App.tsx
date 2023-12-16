@@ -37,6 +37,17 @@ function App() {
       >
         切换为系统主题
       </button>
+      <button
+        onClick={() => {
+          new window.Notification("主标题", {
+            title: "主标题",
+            subtitle: "副标题",
+            body: "内容",
+          }).show();
+        }}
+      >
+        发送通知
+      </button>
     </>
   );
 }

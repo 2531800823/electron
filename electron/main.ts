@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut, ipcMain, nativeTheme } from "electron";
+import { app, BrowserWindow, globalShortcut, ipcMain, nativeTheme, Notification } from "electron";
 import path from "node:path";
 
 // The built directory structure
@@ -77,7 +77,23 @@ app
       win?.webContents.toggleDevTools();
     });
   })
-  .then(ready);
+  .then(ready)
+  .then(() => {
+    setTimeout(showNotification, 3000);
+  });
+
+// 创建通知
+function showNotification() {
+  console.log(Notification.isSupported(), "xxx");
+  if (Notification.isSupported()) {
+    console.log("notification is suppoerted");
+    new Notification({
+      title: "已成功导出文件",
+      subtitle: `文件路径：`, // macOS
+      body: `文件路径：`,
+    }).show();
+  }
+}
 
 // 监听事件
 ipcMain.handle("dark-mode:toggle", () => {
