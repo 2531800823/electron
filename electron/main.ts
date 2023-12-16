@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut } from "electron";
+import { app, BrowserWindow, globalShortcut, ipcMain, nativeTheme } from "electron";
 import path from "node:path";
 
 // The built directory structure
@@ -72,8 +72,33 @@ app
   .whenReady()
   .then(() => {
     // 注册快捷键
-    globalShortcut.register("shift+m", () => {
+    globalShortcut.register("shift+F11", () => {
+      // 可以创建全局变量，然后监听只获取焦点触发
       win?.webContents.toggleDevTools();
     });
   })
   .then(ready);
+
+// 监听事件
+ipcMain.handle("dark-mode:toggle", () => {
+  if (nativeTheme.shouldUseDarkColors) {
+    nativeTheme.themeSource = "light";
+  } else {
+    nativeTheme.themeSource = "dark";
+  }
+  return nativeTheme.shouldUseDarkColors;
+});
+
+ipcMain.handle("dark-mode:light", () => {
+  nativeTheme.themeSource = "light";
+  return nativeTheme.shouldUseDarkColors;
+});
+
+ipcMain.handle("dark-mode:dark", () => {
+  nativeTheme.themeSource = "dark";
+  return nativeTheme.shouldUseDarkColors;
+});
+
+ipcMain.handle("dark-mode:system", () => {
+  nativeTheme.themeSource = "system";
+});

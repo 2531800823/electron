@@ -3,7 +3,7 @@ import App from "./App.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
 
-// Remove Preload scripts loading
+// Remove Preload scripts loading 删除loading
 postMessage({ payload: "removeLoading" }, "*");
 
 // Use contextBridge  监听 ipc 通讯
