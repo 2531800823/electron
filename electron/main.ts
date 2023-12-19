@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut, ipcMain, nativeTheme, Notification } from "electron";
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeTheme, Notification, Tray } from "electron";
 import path from "node:path";
 
 // The built directory structure
@@ -14,12 +14,14 @@ process.env.DIST = path.join(__dirname, "../dist");
 process.env.VITE_PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.env.DIST, "../public");
 
 let win: BrowserWindow | null;
+let appIcon = null;
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
 
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, "main.svg"),
+    show: false,
+    icon: path.join(process.env.VITE_PUBLIC, "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -29,6 +31,7 @@ function createWindow() {
   win.webContents.on("did-finish-load", () => {
     win?.webContents.send("main-process-message", "给主进程发送消息");
   });
+  console.log("🚀 ~ file: main.ts:32 ~ win.webContents.on ~ win?.webContents:", win?.webContents);
 
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
@@ -36,6 +39,11 @@ function createWindow() {
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(process.env.DIST, "index.html"));
   }
+
+  // 优雅的显示窗口
+  win.on("ready-to-show", () => {
+    win?.show();
+  });
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -71,15 +79,38 @@ function ready() {
 app
   .whenReady()
   .then(() => {
+    // 先释放被占用的快捷键（例如 CommandOrControl+C）
+    globalShortcut.unregister("ctrl+alt+p");
     // 注册快捷键
-    globalShortcut.register("shift+F11", () => {
+    const a = globalShortcut.register("ctrl+alt+p", () => {
       // 可以创建全局变量，然后监听只获取焦点触发
       win?.webContents.toggleDevTools();
     });
+
+    // new Notification({
+    //   title: "快捷键已经被注册",
+    // }).show();
   })
   .then(ready)
   .then(() => {
-    setTimeout(showNotification, 3000);
+    // setTimeout(showNotification, 3000);
+  })
+  .then(() => {
+    appIcon = new Tray(path.join(process.env.VITE_PUBLIC, "icon.png"));
+    // 双击图标显示窗口
+    appIcon.on("double-click", () => {
+      win?.show();
+    });
+    const contextMenu = Menu.buildFromTemplate([
+      { label: "Item1", type: "radio" },
+      { label: "Item2", type: "radio" },
+    ]);
+
+    // Make a change to the context menu
+    contextMenu.items[1].checked = false;
+
+    // Call this again for Linux because we modified the context menu
+    appIcon.setContextMenu(contextMenu);
   });
 
 // 创建通知

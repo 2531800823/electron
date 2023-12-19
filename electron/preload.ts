@@ -9,7 +9,7 @@ contextBridge.exposeInMainWorld("darkMode", {
   system: () => ipcRenderer.invoke("dark-mode:system"),
 });
 
-// `exposeInMainWorld` can't detect attributes and methods of `prototype`, manually patching it.
+// `exposeInMainWorld` can't detect attributes and methods of `prototype`, manually p  atching it.
 function withPrototype(obj: Record<string, any>) {
   const protos = Object.getPrototypeOf(obj);
 
