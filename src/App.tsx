@@ -39,11 +39,17 @@ function App() {
       </button>
       <button
         onClick={() => {
-          new window.Notification("主标题", {
+          Notification.requestPermission().then((result) => {
+            console.log(result);
+          });
+
+          alert(Notification.permission);
+          const a = new window.Notification("主标题", {
             title: "主标题",
             subtitle: "副标题",
             body: "内容",
-          }).show();
+          } as any);
+          console.log(a);
         }}
       >
         发送通知

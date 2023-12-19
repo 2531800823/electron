@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeTheme, Notification, Tray } from "electron";
+import { app, BrowserWindow, globalShortcut, ipcMain, Menu, nativeTheme, Notification, Tray } from "electron";
 import path from "node:path";
 
 // The built directory structure
@@ -82,7 +82,7 @@ app
     // 先释放被占用的快捷键（例如 CommandOrControl+C）
     globalShortcut.unregister("ctrl+alt+p");
     // 注册快捷键
-    const a = globalShortcut.register("ctrl+alt+p", () => {
+    globalShortcut.register("ctrl+alt+p", () => {
       // 可以创建全局变量，然后监听只获取焦点触发
       win?.webContents.toggleDevTools();
     });
@@ -93,7 +93,7 @@ app
   })
   .then(ready)
   .then(() => {
-    // setTimeout(showNotification, 3000);
+    setTimeout(showNotification, 3000);
   })
   .then(() => {
     appIcon = new Tray(path.join(process.env.VITE_PUBLIC, "icon.png"));
